@@ -1,0 +1,9 @@
+[submodule "bitnami-kafka-ib-source"]
+	path = bitnami-kafka-ib-source
+	url = https://repo1.dso.mil/dsop/bitnami/kafka.git
+[submodule "bitnami-zookeeper-lts-source"]
+	path = bitnami-zookeeper-lts-ib-source
+	url = https://repo1.dso.mil/dsop/bitnami/zookeeper/zookeeper-lts.git
+[submodule "bitnami-zookeeper-latest-source"]
+	path = bitnami-zookeeper-latest-ib-source
+	url = https://repo1.dso.mil/dsop/bitnami/zookeeper/zookeeper-latest.git

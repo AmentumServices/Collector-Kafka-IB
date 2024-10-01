@@ -1,0 +1,7 @@
+# Ignore .vagrant
+.vagrant*
+
+# Ignore Files
+*.tgz
+*.zip
+*.bundle
