@@ -7,3 +7,6 @@
 [submodule "bitnami-zookeeper-latest-source"]
 	path = bitnami-zookeeper-latest-ib-source
 	url = https://repo1.dso.mil/dsop/bitnami/zookeeper/zookeeper-latest.git
+[submodule "operator-source"]
+	path = operator-source
+	url = https://repo1.dso.mil/dsop/opensource/strimzi/operator.git

@@ -2,4 +2,6 @@ registry1.dso.mil:
     images-by-tag-regex:
         ironbank/bitnami/kafka: ^3.4.0$
         ironbank/bitnami/zookeeper: ^3.8.4$
+        ironbank/opensource/strimzi/operator: ^0.43.0$|^0.35.1$
+        ironbank/opensource/strimzi/kafka: ^0.35.1-kafka-3.4.0$
         ironbank/opensource/apache/zookeeper: ^3.9.2$
