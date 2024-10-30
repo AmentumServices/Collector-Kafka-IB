@@ -39,7 +39,7 @@ jobs:
 
       - name: Run Skopeo Sync
         run: |
-          skopeo sync \
+          skopeo sync --scoped \
               --src yaml --dest dir ${{ vars.COLLECTOR }}.yml ${{ vars.COLLECTOR }}
 
       - name: Directory Contents
@@ -95,6 +95,9 @@ jobs:
       contents: write
       pull-requests: read
     steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
       - name: Install mkisofs
         run: |
           sudo apt-get update -y
@@ -105,8 +108,25 @@ jobs:
         with:
           merge-multiple: true
 
+      - name: Pull helm chart
+        run: |
+          mkdir helmchart
+          cd helmchart
+          helm pull oci://registry-1.docker.io/bitnamicharts/kafka
+
       - name: Show Artifacts
         run: ls -Alh ${{ vars.COLLECTOR }}-*.*
+
+      - name: Generate Artifact Hash File
+        run: |
+          sha256sum -b ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}* | tee \
+            ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.sha
+
+      - name: Upload Artifact Hash File
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.sha
+          path: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.sha
 
       - name: Make ISO
         run: |
@@ -114,12 +134,12 @@ jobs:
             -V '${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}' \
             -A '${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}' \
             -o ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso \
-            ${{ vars.COLLECTOR }}-*.*
+            ${{ vars.COLLECTOR }}-*.* helmchart *.md
 
       - name: Implant MD5 sum into iso
         run: implantisomd5 ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso
 
-      - name: Generate Hash
+      - name: Generate ISO Hash
         run: |
           sha256sum -b ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso | tee \
             ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.sha
@@ -133,8 +153,9 @@ jobs:
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso
           path: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso
+          if-no-files-found: error
 
-      - name: Upload ISO SHA
+      - name: Upload ISO Hash
         uses: actions/upload-artifact@v4
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.sha
